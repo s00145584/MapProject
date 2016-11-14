@@ -2,89 +2,289 @@
 @{
     ViewBag.Title = "Index";
 }
-
-<div id="map">
-    
+<div id="top">
+    <div id="row">
+        <div id="right-panel" class="col-xs-3 col-sm-3 col-md-3 col-lg-3">
+            <div>
+                <b>Start:</b>
+                <select id="start">
+                    <option value="54.2725049,-8.4746546">The Glasshouse Hotel</option>
+                    <option value="Boston, MA">Boston, MA</option>
+                    <option value="New York, NY">New York, NY</option>
+                    <option value="Miami, FL">Miami, FL</option>
+                </select>
+                <br>
+                <b>Waypoints:</b> <br>
+                <i>(Ctrl+Click or Cmd+Click for multiple selection)</i> <br>
+                <select multiple id="waypoints">
+                    <option value="54.2742148,-8.4627651">Hospital</option>
+                    <option value="54.2785528,-8.4600902">Sligo IT</option>
+                    <option value="54.3404664,-8.3675748">Glencar Waterfall</option>
+                    <option value="54.2708788,-8.4700459">Sligo Abbey</option>
+                    <option value="54.2540863,-8.4706655">Sligo Park Hotel</option>
+                    <option value="54.2655342,-8.6036682">Strandhill Golf Club</option>
+                    <option value="54.2586035,-8.5740405">Queen Maeve's Grave</option>
+                    <option value="54.4657159,-8.4498033">Star of the Sea</option>
+                </select>
+                <br>
+                <b>End:</b>
+                <select id="end">
+                    <option value="54.2725049,-8.4746546">The Glasshouse Hotel</option>
+                    <option value="Seattle, WA">Seattle, WA</option>
+                    <option value="San Francisco, CA">San Francisco, CA</option>
+                    <option value="Los Angeles, CA">Los Angeles, CA</option>
+                </select>
+                <br>
+                <input type="submit" id="submit">
+            </div>
+            <div id="directions-panel"></div>
+        </div>
+        <div id="map" class="col-xs-8 col-sm-8 col-md-8 col-lg-8"></div>
+    </div>
 </div>
-<div id="output"></div>
+    <script>
+        function initMap() {
+            var directionsService = new google.maps.DirectionsService;
+            var directionsDisplay = new google.maps.DirectionsRenderer;
+            var map = new google.maps.Map(document.getElementById('map'), {
+                zoom: 14,
+                center: { lat: 54.27, lng: -8.47 }
+            });
+            directionsDisplay.setMap(map);
 
-<script>
-      function initMap() {
-        var bounds = new google.maps.LatLngBounds;
-        var markersArray = [];
-
-        var origin1 = {lat: 55.93, lng: -3.118};
-        var destinationA = 'Stockholm, Sweden';
-        var destinationB = 'Sligo, Ireland';
-        var destinationC = 'Dublin, Ireland';
-        var destinationD = 'London, UK';
-        var destinationE = 'Cork, Ireland';
-
-        var destinationIcon = 'https://chart.googleapis.com/chart?' +
-            'chst=d_map_pin_letter&chld=D|FF0000|000000';
-        var originIcon = 'https://chart.googleapis.com/chart?' +
-            'chst=d_map_pin_letter&chld=O|FFFF00|000000';
-        var map = new google.maps.Map(document.getElementById('map'), {
-          center: {lat: 55.53, lng: 9.4},
-          zoom: 10
-        });
-        var geocoder = new google.maps.Geocoder;
-
-        var service = new google.maps.DistanceMatrixService;
-        service.getDistanceMatrix({
-          origins: [origin1],
-          destinations: [destinationA, destinationB, destinationC, destinationD, destinationE],
-          travelMode: 'DRIVING',
-          unitSystem: google.maps.UnitSystem.METRIC,
-          avoidHighways: false,
-          avoidTolls: false
-        }, function(response, status) {
-          if (status !== 'OK') {
-            alert('Error was: ' + status);
-          } else {
-            var originList = response.originAddresses;
-            var destinationList = response.destinationAddresses;
-            var outputDiv = document.getElementById('output');
-            outputDiv.innerHTML = '';
-            deleteMarkers(markersArray);
-
-            var showGeocodedAddressOnMap = function(asDestination) {
-              var icon = asDestination ? destinationIcon : originIcon;
-              return function(results, status) {
-                if (status === 'OK') {
-                  map.fitBounds(bounds.extend(results[0].geometry.location));
-                  markersArray.push(new google.maps.Marker({
-                    map: map,
-                    position: results[0].geometry.location,
-                    icon: icon
-                  }));
-                } else {
-                  alert('Geocode was not successful due to: ' + status);
-                }
-              };
-            };
-
-            for (var i = 0; i < originList.length; i++) {
-              var results = response.rows[i].elements;
-              geocoder.geocode({'address': originList[i]},
-                  showGeocodedAddressOnMap(false));
-              for (var j = 0; j < results.length; j++) {
-                geocoder.geocode({'address': destinationList[j]},
-                    showGeocodedAddressOnMap(true));
-                outputDiv.innerHTML += originList[i] + ' to ' + destinationList[j] + ': ' + results[j].distance.text + ' in ' + results[j].duration.text + '<br>';
-              }
-            }
-          }
-        });
-      }
-
-      function deleteMarkers(markersArray) {
-        for (var i = 0; i < markersArray.length; i++) {
-          markersArray[i].setMap(null);
+            document.getElementById('submit').addEventListener('click', function () {
+                calculateAndDisplayRoute(directionsService, directionsDisplay);
+            });
         }
-        markersArray = [];
-      }
-</script>
-<script async defer
-        src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBw_b25ZsVxp4GvOal3ImsezOFWLU-PMyw&callback=initMap">
-</script>
+
+        function calculateAndDisplayRoute(directionsService, directionsDisplay) {
+            var waypts = [];
+            var checkboxArray = document.getElementById('waypoints');
+            for (var i = 0; i < checkboxArray.length; i++) {
+                if (checkboxArray.options[i].selected) {
+                    waypts.push({
+                        location: checkboxArray[i].value,
+                        stopover: true
+                    });
+                }
+            }
+
+            directionsService.route({
+                origin: document.getElementById('start').value,
+                destination: document.getElementById('end').value,
+                waypoints: waypts,
+                optimizeWaypoints: true,
+                travelMode: 'DRIVING'
+            }, function (response, status) {
+                if (status === 'OK') {
+                    directionsDisplay.setDirections(response);
+                    var route = response.routes[0];
+                    var summaryPanel = document.getElementById('directions-panel');
+                    summaryPanel.innerHTML = '';
+                    // For each route, display summary information.
+                    for (var i = 0; i < route.legs.length; i++) {
+                        var routeSegment = i + 1;
+                        summaryPanel.innerHTML += '<b>Route Segment: ' + routeSegment +
+                            '</b><br>';
+                        summaryPanel.innerHTML += route.legs[i].start_address + '<br>to<br>';
+                        summaryPanel.innerHTML += route.legs[i].end_address + '<br>';
+                        summaryPanel.innerHTML += route.legs[i].distance.text + '<br>';
+                        summaryPanel.innerHTML += route.legs[i].duration.text + '<br><br>';
+                    }
+                } else {
+                    window.alert('Directions request failed due to ' + status);
+                }
+            });
+        }
+
+        $(document).ready(function () {
+            //$(".container.body-content").css("min-width", "1300px");
+            $("footer").hide();
+        });
+    </script>
+
+
+    @*<div id="floating-panel">
+            <b>Start: </b>
+            <select id="start">
+                <option value="penn station, new york, ny">Penn Station</option>
+                <option value="grand central station, new york, ny">Grand Central Station</option>
+                <option value="625 8th Avenue, New York, NY, 10018">Port Authority Bus Terminal</option>
+                <option value="staten island ferry terminal, new york, ny">Staten Island Ferry Terminal</option>
+                <option value="101 E 125th Street, New York, NY">Harlem - 125th St Station</option>
+            </select>
+            <b>End: </b>
+            <select id="end">
+                <option value="260 Broadway New York NY 10007">City Hall</option>
+                <option value="W 49th St & 5th Ave, New York, NY 10020">Rockefeller Center</option>
+                <option value="moma, New York, NY">MOMA</option>
+                <option value="350 5th Ave, New York, NY, 10118">Empire State Building</option>
+                <option value="253 West 125th Street, New York, NY">Apollo Theater</option>
+                <option value="1 Wall St, New York, NY">Wall St</option>
+            </select>
+        </div>
+        <div id="map"></div>
+            &nbsp;
+        <div id="warnings-panel"></div>
+        <script>
+              function initMap() {
+                var markerArray = [];
+
+                // Instantiate a directions service.
+                var directionsService = new google.maps.DirectionsService;
+
+                // Create a map and center it on Manhattan.
+                var map = new google.maps.Map(document.getElementById('map'), {
+                  zoom: 13,
+                  center: {lat: 40.771, lng: -73.974}
+                });
+
+                // Create a renderer for directions and bind it to the map.
+                var directionsDisplay = new google.maps.DirectionsRenderer({map: map});
+
+                // Instantiate an info window to hold step text.
+                var stepDisplay = new google.maps.InfoWindow;
+
+                // Display the route between the initial start and end selections.
+                calculateAndDisplayRoute(
+                    directionsDisplay, directionsService, markerArray, stepDisplay, map);
+                // Listen to change events from the start and end lists.
+                var onChangeHandler = function() {
+                  calculateAndDisplayRoute(
+                      directionsDisplay, directionsService, markerArray, stepDisplay, map);
+                };
+                document.getElementById('start').addEventListener('change', onChangeHandler);
+                document.getElementById('end').addEventListener('change', onChangeHandler);
+              }
+
+              function calculateAndDisplayRoute(directionsDisplay, directionsService,
+                  markerArray, stepDisplay, map) {
+                // First, remove any existing markers from the map.
+                for (var i = 0; i < markerArray.length; i++) {
+                  markerArray[i].setMap(null);
+                }
+
+                // Retrieve the start and end locations and create a DirectionsRequest using
+                // WALKING directions.
+                directionsService.route({
+                  origin: document.getElementById('start').value,
+                  destination: document.getElementById('end').value,
+                  travelMode: 'WALKING'
+                }, function(response, status) {
+                  // Route the directions and pass the response to a function to create
+                  // markers for each step.
+                  if (status === 'OK') {
+                    document.getElementById('warnings-panel').innerHTML =
+                        '<b>' + response.routes[0].warnings + '</b>';
+                    directionsDisplay.setDirections(response);
+                    showSteps(response, markerArray, stepDisplay, map);
+                  } else {
+                    window.alert('Directions request failed due to ' + status);
+                  }
+                });
+              }
+
+              function showSteps(directionResult, markerArray, stepDisplay, map) {
+                // For each step, place a marker, and add the text to the marker's infowindow.
+                // Also attach the marker to an array so we can keep track of it and remove it
+                // when calculating new routes.
+                var myRoute = directionResult.routes[0].legs[0];
+                for (var i = 0; i < myRoute.steps.length; i++) {
+                  var marker = markerArray[i] = markerArray[i] || new google.maps.Marker;
+                  marker.setMap(map);
+                  marker.setPosition(myRoute.steps[i].start_location);
+                  attachInstructionText(
+                      stepDisplay, marker, myRoute.steps[i].instructions, map);
+                }
+              }
+
+              function attachInstructionText(stepDisplay, marker, text, map) {
+                google.maps.event.addListener(marker, 'click', function() {
+                  // Open an info window when the marker is clicked on, containing the text
+                  // of the step.
+                  stepDisplay.setContent(text);
+                  stepDisplay.open(map, marker);
+                });
+              }
+        </script>*@
+
+    @*<script>
+              function initMap() {
+                var bounds = new google.maps.LatLngBounds;
+                var markersArray = [];
+
+                var origin1 = {lat: 55.93, lng: -3.118};
+                var destinationA = 'Stockholm, Sweden';
+                var destinationB = 'Sligo, Ireland';
+                var destinationC = 'Dublin, Ireland';
+                var destinationD = 'London, UK';
+                var destinationE = 'Cork, Ireland';
+
+                var destinationIcon = 'https://chart.googleapis.com/chart?' +
+                    'chst=d_map_pin_letter&chld=D|FF0000|000000';
+                var originIcon = 'https://chart.googleapis.com/chart?' +
+                    'chst=d_map_pin_letter&chld=O|FFFF00|000000';
+                var map = new google.maps.Map(document.getElementById('map'), {
+                  center: {lat: 55.53, lng: 9.4},
+                  zoom: 10
+                });
+                var geocoder = new google.maps.Geocoder;
+
+                var service = new google.maps.DistanceMatrixService;
+                service.getDistanceMatrix({
+                  origins: [origin1],
+                  destinations: [destinationA, destinationB, destinationC, destinationD, destinationE],
+                  travelMode: 'DRIVING',
+                  unitSystem: google.maps.UnitSystem.METRIC,
+                  avoidHighways: false,
+                  avoidTolls: false
+                }, function(response, status) {
+                  if (status !== 'OK') {
+                    alert('Error was: ' + status);
+                  } else {
+                    var originList = response.originAddresses;
+                    var destinationList = response.destinationAddresses;
+                    var outputDiv = document.getElementById('output');
+                    outputDiv.innerHTML = '';
+                    deleteMarkers(markersArray);
+
+                    var showGeocodedAddressOnMap = function(asDestination) {
+                      var icon = asDestination ? destinationIcon : originIcon;
+                      return function(results, status) {
+                        if (status === 'OK') {
+                          map.fitBounds(bounds.extend(results[0].geometry.location));
+                          markersArray.push(new google.maps.Marker({
+                            map: map,
+                            position: results[0].geometry.location,
+                            icon: icon
+                          }));
+                        } else {
+                          alert('Geocode was not successful due to: ' + status);
+                        }
+                      };
+                    };
+
+                    for (var i = 0; i < originList.length; i++) {
+                      var results = response.rows[i].elements;
+                      geocoder.geocode({'address': originList[i]},
+                          showGeocodedAddressOnMap(false));
+                      for (var j = 0; j < results.length; j++) {
+                        geocoder.geocode({'address': destinationList[j]},
+                            showGeocodedAddressOnMap(true));
+                        outputDiv.innerHTML += originList[i] + ' to ' + destinationList[j] + ': ' + results[j].distance.text + ' in ' + results[j].duration.text + '<br>';
+                      }
+                    }
+                  }
+                });
+              }
+
+              function deleteMarkers(markersArray) {
+                for (var i = 0; i < markersArray.length; i++) {
+                  markersArray[i].setMap(null);
+                }
+                markersArray = [];
+              }
+        </script>*@
+    <script async defer
+            src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBw_b25ZsVxp4GvOal3ImsezOFWLU-PMyw&callback=initMap">
+    </script>
