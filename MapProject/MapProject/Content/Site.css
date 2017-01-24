@@ -24,15 +24,18 @@ textarea {
 }
 
 #map{
-    height:550px;
+    height:850px;
     /*width:inherit;*/
     margin:15px;
+    width:1300px;
+    overflow:visible;
 }
 
 #right-panel{
     float:left;
     margin: 15px;
     line-height:20px;
+    padding-left:0px;
 }
 
 #row{
@@ -47,4 +50,40 @@ textarea {
 #waypoints{
     width:350px;
     height:140px;
+}
+
+.checkbox{
+    float:right;
+    width:20px;
+}
+
+#thumbimg{
+    width:  200px;
+    height: auto;
+    background-position: 50% 50%;
+    background-repeat:   no-repeat;
+    background-size:     cover;
+    float:left;
+}
+
+
+.listItem{
+    display: table-row;
+    justify-content: space-between;
+    width:100px;
+}
+
+#text{
+    width:500px;
+}
+
+#locationlist{
+    padding-left:5px;
+    padding-top:10px;
+    border:1px solid #eeeeee;
+    width:515px;
+}
+hr{
+    margin-top:5px;
+    margin-bottom:5px;
 }

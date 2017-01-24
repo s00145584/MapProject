@@ -8,19 +8,19 @@ using System.Web.Mvc;
 
 namespace MapProject.Controllers
 {
-    public class MapController : Controller
+    public class OwnerController : Controller
     {
         private ILocationRepo repo;
 
-        public MapController()
+        public OwnerController()
         {
             repo = new LocationRepo(new LocationContext());
         }
 
-        // GET: Map
-        public ActionResult Index()
+        // GET: Owner
+        public ActionResult Index(string OwnerId)
         {
-            return View(repo.GetAll());
+            return View(repo.GetByOwnerID(OwnerId));
         }
     }
 }

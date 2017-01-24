@@ -1,0 +1,90 @@
+﻿
+@model IEnumerable<MapProject.Models.LocationViewModel>
+@{
+    ViewBag.Title = "Index";
+}
+<div id="top">
+    <div id="row">
+        <div id="right-panel" class="col-xs-3 col-sm-3 col-md-3 col-lg-3">
+            <div>
+                <b>Start:</b>
+                <select id="start">
+                    <option value="54.2725049,-8.4746546">The Glasshouse Hotel</option>
+                    <option value="Boston, MA">Boston, MA</option>
+                    <option value="New York, NY">New York, NY</option>
+                    <option value="Miami, FL">Miami, FL</option>
+                </select>
+                @*
+                    <br>
+                    <b>Waypoints:</b> <br>
+                    <i>(Ctrl+Click or Cmd+Click for multiple selection)</i> <br>
+                    <select multiple id="waypoints">
+                        <option value="54.2742148,-8.4627651">Hospital</option>
+                        <option value="54.2785528,-8.4600902">Sligo IT</option>
+                        <option value="54.3404664,-8.3675748">Glencar Waterfall</option>
+                        <option value="54.2708788,-8.4700459">Sligo Abbey</option>
+                        <option value="54.2540863,-8.4706655">Sligo Park Hotel</option>
+                        <option value="54.2655342,-8.6036682">Strandhill Golf Club</option>
+                        <option value="54.2586035,-8.5740405">Queen Maeve's Grave</option>
+                        <option value="54.4657159,-8.4498033">Star of the Sea</option>
+                    </select>
+                    <br>
+                *@
+                <b>End:</b>
+                <select id="end">
+                    <option value="54.2725049,-8.4746546">The Glasshouse Hotel</option>
+                    <option value="Seattle, WA">Seattle, WA</option>
+                    <option value="San Francisco, CA">San Francisco, CA</option>
+                    <option value="Los Angeles, CA">Los Angeles, CA</option>
+                </select>
+                <br>
+                <input type="submit" id="submit">
+            </div>
+            <div id="directions-panel"></div>
+            <ul id="locationlist">
+                @foreach (var item in Model)
+                {
+                    if (Model.First() == item)
+                    { }
+                    else
+                    {
+                        <hr>
+                    }
+
+                    <li class="listItem">
+                        <input type="checkbox" class="checkbox" id="_checkbox_btn" value="@Html.DisplayFor(modelItem => item.Latitude),@Html.DisplayFor(modelItem => item.Longitude)" />
+
+                        <img id="thumbimg" class="img-thumbnail" src="@Html.DisplayFor(modelItem => item.Url)">
+                        <div id="text">
+                            @Html.DisplayFor(modelItem => item.Name)<br>
+                            @Html.DisplayFor(modelItem => item.Latitude)<br>
+                            @Html.DisplayFor(modelItem => item.Longitude)<br>
+                        </div>
+                        <br><br />
+                    </li>
+                }
+            </ul>
+        </div>
+        <div id="map" class="col-xs-8 col-sm-8 col-md-8 col-lg-8"></div>
+    </div>
+</div>
+<script>
+        function initMap() {
+            var directionsService = new google.maps.DirectionsService;
+            var directionsDisplay = new google.maps.DirectionsRenderer;
+            var map = new google.maps.Map(document.getElementById('map'), {
+                zoom: 14,
+                center: { lat: 54.27, lng: -8.47 }
+            });
+            directionsDisplay.setMap(map);
+
+            document.getElementById('submit').addEventListener('click', function () {
+                calculateAndDisplayRoute(directionsService, directionsDisplay);
+            });
+        }
+</script>
+
+
+<script async defer
+        src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBw_b25ZsVxp4GvOal3ImsezOFWLU-PMyw&callback=initMap">
+</script>

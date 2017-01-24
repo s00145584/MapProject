@@ -9,6 +9,9 @@ using Microsoft.AspNet.Identity;
 using Microsoft.AspNet.Identity.Owin;
 using Microsoft.Owin.Security;
 using MapProject.Models;
+using System.Data.SqlClient;
+using System.Configuration;
+using System.Data;
 
 namespace MapProject.Controllers
 {
@@ -17,6 +20,11 @@ namespace MapProject.Controllers
     {
         private ApplicationSignInManager _signInManager;
         private ApplicationUserManager _userManager;
+        private string LoginRole;
+        private string OwnerId;
+        SqlDataReader rdr = null;
+
+        SqlConnection connection = new SqlConnection(ConfigurationManager.ConnectionStrings["DefaultConnection"].ToString());
 
         public AccountController()
         {
@@ -75,11 +83,37 @@ namespace MapProject.Controllers
 
             // This doesn't count login failures towards account lockout
             // To enable password failures to trigger account lockout, change to shouldLockout: true
+
+            
+
+            SqlCommand cmd= new SqlCommand("dbo.getRole", connection);
+            cmd.CommandType = System.Data.CommandType.StoredProcedure;
+            cmd.Parameters.Add("@email", SqlDbType.VarChar).Value = model.Email;
+
+            connection.Open();
+            rdr = cmd.ExecuteReader();
+
+            while (rdr.Read())
+            {
+                LoginRole = rdr["RoleId"].ToString();
+                OwnerId = rdr["UserId"].ToString();
+            }
+
             var result = await SignInManager.PasswordSignInAsync(model.Email, model.Password, model.RememberMe, shouldLockout: false);
             switch (result)
             {
                 case SignInStatus.Success:
-                    return RedirectToLocal(returnUrl);
+                    //return RedirectToLocal(returnUrl);
+                    if (LoginRole == "3")
+                    {
+                        //return RedirectToAction("Index", "Owner");
+                        return RedirectToAction("Index", "Owner", new { OwnerId = OwnerId });
+                    }
+                    else
+                    {
+                        return RedirectToAction("Index", "Map");
+                    }
+                    
                 case SignInStatus.LockedOut:
                     return View("Lockout");
                 case SignInStatus.RequiresVerification:
@@ -156,14 +190,28 @@ namespace MapProject.Controllers
                 if (result.Succeeded)
                 {
                     await SignInManager.SignInAsync(user, isPersistent:false, rememberBrowser:false);
-                    
+
                     // For more information on how to enable account confirmation and password reset please visit http://go.microsoft.com/fwlink/?LinkID=320771
                     // Send an email with this link
                     // string code = await UserManager.GenerateEmailConfirmationTokenAsync(user.Id);
                     // var callbackUrl = Url.Action("ConfirmEmail", "Account", new { userId = user.Id, code = code }, protocol: Request.Url.Scheme);
                     // await UserManager.SendEmailAsync(user.Id, "Confirm your account", "Please confirm your account by clicking <a href=\"" + callbackUrl + "\">here</a>");
+                    
+                    using (connection)
+                    {
+                        using (SqlCommand cmd = new SqlCommand("dbo.addUserRole", connection))
+                        {
+                            cmd.CommandType = CommandType.StoredProcedure;
 
-                    return RedirectToAction("Index", "Home");
+                            cmd.Parameters.Add("@email", SqlDbType.VarChar).Value = model.Email;
+                            cmd.Parameters.Add("@roleId", SqlDbType.VarChar).Value = model.RoleId;
+
+                            connection.Open();
+                            cmd.ExecuteNonQuery();
+                        }
+                    }
+                    return RedirectToAction("LogOff", "Account");
+                    //return RedirectToAction("Index", "Home");
                 }
                 AddErrors(result);
             }
