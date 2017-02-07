@@ -18,10 +18,12 @@ namespace MapProject.Models
         [Required]
         public float Longitude { get; set; }
         [Required]
+        [Display(Name="Picture Url")]
         public string Url { get; set; }
-        public string Descritpion { get; set; }
+        public string Description { get; set; }
         [Required]
         public string OwnerId { get; set; }
+        [Display(Name = "Location Time")]
         public float Time { get; set; }
 
     }

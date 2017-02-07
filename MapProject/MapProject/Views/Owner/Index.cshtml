@@ -1,10 +1,9 @@
-﻿
-@model IEnumerable<MapProject.Models.LocationViewModel>
+﻿@model IEnumerable<MapProject.Models.LocationViewModel>
 @{
     ViewBag.Title = "Index";
 }
 <div id="top">
-    <div id="row">
+    <div id="row" class="row">
         <div id="right-panel" class="col-xs-3 col-sm-3 col-md-3 col-lg-3">
             <div>
                 <b>Start:</b>
@@ -51,21 +50,29 @@
                         <hr>
                     }
 
-                    <li class="listItem">
-                        <input type="checkbox" class="checkbox" id="_checkbox_btn" value="@Html.DisplayFor(modelItem => item.Latitude),@Html.DisplayFor(modelItem => item.Longitude)" />
+                    <li class="listItem row">
+                        @*<input type="checkbox" class="checkbox" id="_checkbox_btn" value="@Html.DisplayFor(modelItem => item.Latitude),@Html.DisplayFor(modelItem => item.Longitude)" />*@
 
-                        <img id="thumbimg" class="img-thumbnail" src="@Html.DisplayFor(modelItem => item.Url)">
-                        <div id="text">
+                        <img id="thumbimg" class="img-thumbnail col-xs-5 col-sm-5 col-md-5 col-lg-5" src="@Html.DisplayFor(modelItem => item.Url)">
+                        <div id="text" class="col-xs-5 col-sm-5 col-md-5 col-lg-5">
                             @Html.DisplayFor(modelItem => item.Name)<br>
                             @Html.DisplayFor(modelItem => item.Latitude)<br>
                             @Html.DisplayFor(modelItem => item.Longitude)<br>
+                            @Html.DisplayFor(modelItem => item.Time)<text> Mins</text><br>
                         </div>
+                        @*<div id="checkbox" class="col-xs-1 col-sm-1 col-md-1 col-lg-1">
+                            <input type="checkbox" class="checkbox" id="_checkbox_btn" value="@Html.DisplayFor(modelItem => item.Latitude),@Html.DisplayFor(modelItem => item.Longitude)" />
+                        </div>*@
                         <br><br />
                     </li>
                 }
             </ul>
         </div>
-        <div id="map" class="col-xs-8 col-sm-8 col-md-8 col-lg-8"></div>
+        <div id="form" class="col-xs-5 col-sm-5 col-md-5 col-lg-5">
+            @Html.Partial("_AddPlace", new MapProject.Models.LocationViewModel())
+        </div>
+        <div id="map" class="col-xs-4 col-sm-4 col-md-4 col-lg-4"></div>
+        
     </div>
 </div>
 <script>
