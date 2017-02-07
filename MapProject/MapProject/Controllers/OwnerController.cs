@@ -2,10 +2,14 @@
 using MapProject.Models;
 using System;
 using System.Collections.Generic;
+using System.Configuration;
+using System.Data;
+using System.Data.SqlClient;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Web;
 using System.Web.Mvc;
+using System.Web.Security;
 
 namespace MapProject.Controllers
 {
@@ -13,57 +17,70 @@ namespace MapProject.Controllers
     {
         private ILocationRepo repo;
 
+        SqlDataReader rdr = null;
+
+        SqlConnection connection = new SqlConnection(ConfigurationManager.ConnectionStrings["DefaultConnection"].ToString());
+
         public OwnerController()
         {
             repo = new LocationRepo(new LocationContext());
         }
 
         // GET: Owner
-        public ActionResult Index(string OwnerId)
+        public ActionResult Index()
         {
-            return View(repo.GetByOwnerID(OwnerId));
+            var test = Request.Cookies["OwnerId"];
+            try
+            {
+                ViewBag.OwnerId = test.Value;
+            }
+            catch (Exception)
+            {
+                return RedirectToAction("Index", "Home");
+                throw;
+            }
+            
+            return View(repo.GetByOwnerID(test.Value));
+        }
+
+        [AllowAnonymous]
+        public ActionResult AddPlace()
+        {
+            return PartialView();
         }
 
         [HttpPost]
         [AllowAnonymous]
         [ValidateAntiForgeryToken]
-        public async Task<ActionResult> AddPlace(LoginViewModel model)
+        public ActionResult AddPlace(LocationViewModel model)
         {
-            if (ModelState.IsValid)
-            {
-                var user = new ApplicationUser { UserName = model.Email, Email = model.Email };
-                var result = await UserManager.CreateAsync(user, model.Password);
-                if (result.Succeeded)
+            
+            //if (ModelState.IsValid)
+            //{
+                using (connection)
                 {
-                    await SignInManager.SignInAsync(user, isPersistent: false, rememberBrowser: false);
-
-                    // For more information on how to enable account confirmation and password reset please visit http://go.microsoft.com/fwlink/?LinkID=320771
-                    // Send an email with this link
-                    // string code = await UserManager.GenerateEmailConfirmationTokenAsync(user.Id);
-                    // var callbackUrl = Url.Action("ConfirmEmail", "Account", new { userId = user.Id, code = code }, protocol: Request.Url.Scheme);
-                    // await UserManager.SendEmailAsync(user.Id, "Confirm your account", "Please confirm your account by clicking <a href=\"" + callbackUrl + "\">here</a>");
-
-                    using (connection)
+                    using (SqlCommand cmd = new SqlCommand("dbo.addPlace", connection))
                     {
-                        using (SqlCommand cmd = new SqlCommand("dbo.addUserRole", connection))
-                        {
-                            cmd.CommandType = CommandType.StoredProcedure;
+                        cmd.CommandType = CommandType.StoredProcedure;
 
-                            cmd.Parameters.Add("@email", SqlDbType.VarChar).Value = model.Email;
-                            cmd.Parameters.Add("@roleId", SqlDbType.VarChar).Value = model.RoleId;
+                        cmd.Parameters.Add("@name", SqlDbType.VarChar).Value = model.Name;
+                        cmd.Parameters.Add("@latitude", SqlDbType.VarChar).Value = model.Latitude;
+                        cmd.Parameters.Add("@longitude", SqlDbType.VarChar).Value = model.Longitude;
+                        cmd.Parameters.Add("@url", SqlDbType.VarChar).Value = model.Url;
+                        cmd.Parameters.Add("@ownerId", SqlDbType.VarChar).Value = model.OwnerId;
+                        cmd.Parameters.Add("@description", SqlDbType.VarChar).Value = model.Description;
+                        cmd.Parameters.Add("@time", SqlDbType.VarChar).Value = model.Time;
 
-                            connection.Open();
-                            cmd.ExecuteNonQuery();
-                        }
+                        connection.Open();
+                        cmd.ExecuteNonQuery();
                     }
-                    return RedirectToAction("LogOff", "Account");
-                    //return RedirectToAction("Index", "Home");
                 }
-                AddErrors(result);
-            }
+            //return RedirectToAction("LogOff", "Account");
+            //return RedirectToAction("Index", "Home");
+            //}
 
             // If we got this far, something failed, redisplay form
-            return View(model);
+            return RedirectToAction("Index", "Owner");
         }
     }
 }
