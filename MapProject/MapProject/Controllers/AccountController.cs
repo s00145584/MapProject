@@ -107,7 +107,10 @@ namespace MapProject.Controllers
                     if (LoginRole == "3")
                     {
                         //return RedirectToAction("Index", "Owner");
-                        return RedirectToAction("Index", "Owner", new { OwnerId = OwnerId });
+                        var ownerCookie = new HttpCookie("OwnerId", OwnerId);
+                        ownerCookie.Expires.AddDays(365);
+                        HttpContext.Response.Cookies.Add(ownerCookie);
+                        return RedirectToAction("Index", "Owner");
                     }
                     else
                     {
@@ -210,8 +213,8 @@ namespace MapProject.Controllers
                             cmd.ExecuteNonQuery();
                         }
                     }
-                    return RedirectToAction("LogOff", "Account");
-                    //return RedirectToAction("Index", "Home");
+                    //return RedirectToAction("LogOff", "Account");
+                    return RedirectToAction("Index", "Home");
                 }
                 AddErrors(result);
             }
@@ -440,6 +443,15 @@ namespace MapProject.Controllers
         public ActionResult LogOff()
         {
             AuthenticationManager.SignOut(DefaultAuthenticationTypes.ApplicationCookie);
+            if (Request.Cookies["OwnerId"] != null)
+            {
+                var owner = new HttpCookie("OwnerId")
+                {
+                    Expires = DateTime.Now.AddDays(-1),
+                    Value = null
+                };
+                Response.SetCookie(owner);
+            }
             return RedirectToAction("Index", "Home");
         }
 

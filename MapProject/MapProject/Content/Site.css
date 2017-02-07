@@ -24,18 +24,21 @@ textarea {
 }
 
 #map{
-    height:850px;
+    height:700px;
     /*width:inherit;*/
-    margin:15px;
-    width:1300px;
+    /*margin:15px;*/
+    /*width:1300px;*/
     overflow:visible;
 }
 
 #right-panel{
     float:left;
-    margin: 15px;
+    /*margin: 15px;*/
     line-height:20px;
-    padding-left:0px;
+    /*padding-right:5px;*/
+    padding-top:10px;
+    height:700px;
+    overflow-y:scroll;
 }
 
 #row{
@@ -58,7 +61,7 @@ textarea {
 }
 
 #thumbimg{
-    width:  200px;
+    /*width:  200px;*/
     height: auto;
     background-position: 50% 50%;
     background-repeat:   no-repeat;
@@ -73,17 +76,42 @@ textarea {
     width:100px;
 }
 
-#text{
+/*#text{
     width:500px;
-}
+}*/
 
 #locationlist{
     padding-left:5px;
     padding-top:10px;
     border:1px solid #eeeeee;
-    width:515px;
+    /*width:515px;*/
 }
 hr{
     margin-top:5px;
     margin-bottom:5px;
 }
+
+.textpadding{
+    padding-left:15px;
+}
+
+html, body {
+  height: 100%;
+}
+
+#wrap {
+  min-height: 100%;
+}
+
+#container {
+    overflow:auto;
+    padding-bottom:150px;
+}
+
+.footer {
+  position: relative;
+  margin-top: -150px; /* negative value of footer height */
+  height: 150px;
+  clear:both;
+  padding-top:20px;
+} 
