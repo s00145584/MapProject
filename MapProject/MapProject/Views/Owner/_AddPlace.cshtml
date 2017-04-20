@@ -6,7 +6,7 @@
 <h2>@ViewBag.Title.</h2>
 @*<h2>@ViewBag.OwnerId.</h2>*@
 
-@using (Html.BeginForm("AddPlace", "Owner", FormMethod.Post, new { @class = "form-horizontal", role = "form" }))
+@using (Html.BeginForm("AddPlace", "Owner", FormMethod.Post, new { @class = "form-horizontal", role = "form", enctype = "multipart/form-data" }))
 {
     @Html.AntiForgeryToken()
     <h4>Add a new location.</h4>
@@ -31,12 +31,6 @@
         </div>
     </div>
     <div class="form-group">
-        @Html.LabelFor(m => m.Url, new { @class = "col-md-2 control-label" })
-        <div class="col-md-10">
-            @Html.TextBoxFor(m => m.Url, new { @class = "form-control" })
-        </div>
-    </div>
-    <div class="form-group">
         @Html.LabelFor(m => m.Description, new { @class = "col-md-2 control-label" })
         <div class="col-md-10">
             @Html.TextBoxFor(m => m.Description, new { @class = "form-control" })
@@ -46,6 +40,13 @@
         @Html.LabelFor(m => m.Time, new { @class = "col-md-2 control-label" })
         <div class="col-md-10">
             @Html.TextBoxFor(m => m.Time, new { @class = "form-control" })
+        </div>
+    </div>
+    <div class="form-group">
+        @Html.LabelFor(m => m.Picture, new { @class = "col-md-2 control-label" })
+        <div class="col-md-10">
+            @*@Html.TextBoxFor(m => m.Picture, new { type = "file", @class = "form-control" })*@
+            <input  id="iPicture" name="iPicture" type="file">
         </div>
     </div>
 

@@ -6,14 +6,14 @@
     <div id="row" class="row">
         <div id="right-panel" class="col-xs-3 col-sm-3 col-md-3 col-lg-3">
             <div>
-                <b>Start:</b>
+                @*<b>Start:</b>
                 <select id="start">
                     <option value="54.2725049,-8.4746546">The Glasshouse Hotel</option>
                     <option value="Boston, MA">Boston, MA</option>
                     <option value="New York, NY">New York, NY</option>
                     <option value="Miami, FL">Miami, FL</option>
                 </select>
-                @*
+                
                     <br>
                     <b>Waypoints:</b> <br>
                     <i>(Ctrl+Click or Cmd+Click for multiple selection)</i> <br>
@@ -28,14 +28,14 @@
                         <option value="54.4657159,-8.4498033">Star of the Sea</option>
                     </select>
                     <br>
-                *@
+                
                 <b>End:</b>
                 <select id="end">
                     <option value="54.2725049,-8.4746546">The Glasshouse Hotel</option>
                     <option value="Seattle, WA">Seattle, WA</option>
                     <option value="San Francisco, CA">San Francisco, CA</option>
                     <option value="Los Angeles, CA">Los Angeles, CA</option>
-                </select>
+                </select>*@
                 <br>
                 <input type="submit" id="submit">
             </div>
@@ -53,7 +53,7 @@
                     <li class="listItem row">
                         @*<input type="checkbox" class="checkbox" id="_checkbox_btn" value="@Html.DisplayFor(modelItem => item.Latitude),@Html.DisplayFor(modelItem => item.Longitude)" />*@
 
-                        <img id="thumbimg" class="img-thumbnail col-xs-5 col-sm-5 col-md-5 col-lg-5" src="@Html.DisplayFor(modelItem => item.Url)">
+                        <img id="thumbimg" class="img-thumbnail col-xs-5 col-sm-5 col-md-5 col-lg-5" src="@Html.DisplayFor(modelItem => item.Picture)">
                         <div id="text" class="col-xs-5 col-sm-5 col-md-5 col-lg-5">
                             @Html.DisplayFor(modelItem => item.Name)<br>
                             @Html.DisplayFor(modelItem => item.Latitude)<br>
@@ -88,10 +88,36 @@
             document.getElementById('submit').addEventListener('click', function () {
                 calculateAndDisplayRoute(directionsService, directionsDisplay);
             });
+
+            google.maps.event.addListener(map, 'click', function (event) {
+                var lat = event.latLng.lat();
+                var long = event.latLng.lng();
+                //alert('Lat: ' + lat + ' and Longitude is: ' + long);
+                $('#Latitude').attr('value', lat.toFixed(7));
+                $('#Longitude').attr('value', long.toFixed(5));
+
+                placeMarker(event.latLng, map);
+                var latitude = event.latLng.lat();
+                var longitude = event.latLng.lng();
+                //map.panTo(new google.maps.LatLng(latitude, longitude));
+            });
         }
+        function placeMarker(position, map) {
+            var marker = new google.maps.Marker({
+                position: position,
+                map: map
+            });
+            map.panTo(position);
+        }
+        $(document).ready(function () {
+            //$(".container.body-content").css("min-width", "1300px");
+            $("footer").hide();
+            $('#Latitude').prop("readOnly", true);
+            $('#Longitude').prop("readOnly", true);
+        });
 </script>
 
 
 <script async defer
-        src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBw_b25ZsVxp4GvOal3ImsezOFWLU-PMyw&callback=initMap">
+        src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBw_b25ZsVxp4GvOal3ImsezOFWLU-PMyw&libraries=places&callback=initMap">
 </script>
