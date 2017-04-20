@@ -18,8 +18,8 @@ namespace MapProject.Models
         [Required]
         public float Longitude { get; set; }
         [Required]
-        [Display(Name="Picture Url")]
-        public string Url { get; set; }
+        [Display(Name = "Picture")]
+        public byte[] Picture { get; set; }
         public string Description { get; set; }
         [Required]
         public string OwnerId { get; set; }
@@ -31,6 +31,7 @@ namespace MapProject.Models
     public class LocationContext:DbContext
     {
         public DbSet<LocationViewModel> Locations { get; set; }
+        public DbSet<PlannedTripsModel> Trips { get; set; }
 
         public LocationContext() : base("DefaultConnection") { }
     }

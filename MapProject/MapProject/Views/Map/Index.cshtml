@@ -6,38 +6,14 @@
     <div id="row" class="row">
         <div id="right-panel" class="col-xs-3 col-sm-3 col-md-3 col-lg-3">
             <div class="textpadding">
-                <b>Start:</b>
-                <select id="start">
-                    <option value="54.2725049,-8.4746546">The Glasshouse Hotel</option>
-                    <option value="Boston, MA">Boston, MA</option>
-                    <option value="New York, NY">New York, NY</option>
-                    <option value="Miami, FL">Miami, FL</option>
-                </select>
-                @*
-                    <br>
-                    <b>Waypoints:</b> <br>
-                    <i>(Ctrl+Click or Cmd+Click for multiple selection)</i> <br>
-                    <select multiple id="waypoints">
-                        <option value="54.2742148,-8.4627651">Hospital</option>
-                        <option value="54.2785528,-8.4600902">Sligo IT</option>
-                        <option value="54.3404664,-8.3675748">Glencar Waterfall</option>
-                        <option value="54.2708788,-8.4700459">Sligo Abbey</option>
-                        <option value="54.2540863,-8.4706655">Sligo Park Hotel</option>
-                        <option value="54.2655342,-8.6036682">Strandhill Golf Club</option>
-                        <option value="54.2586035,-8.5740405">Queen Maeve's Grave</option>
-                        <option value="54.4657159,-8.4498033">Star of the Sea</option>
-                    </select>
-                    <br>
-                    *@
-                <b>End:</b>
-                <select id="end">
-                    <option value="54.2725049,-8.4746546">The Glasshouse Hotel</option>
-                    <option value="Seattle, WA">Seattle, WA</option>
-                    <option value="San Francisco, CA">San Francisco, CA</option>
-                    <option value="Los Angeles, CA">Los Angeles, CA</option>
-                </select>
-                <br>
-                <input type="submit" id="submit">
+                <div class="row">
+                    <input id="search" type="text" autocomplete="on" value="" class="col-xs-9 col-sm-9 col-md-9 col-lg-9" />
+                    <input type="submit" id="submit" value="Calculate" class="btn btn-primary col-xs-3 col-sm-3 col-md-3 col-lg-3">
+                </div>
+                <div id="saving" class="row">
+                    <span id="SaveText">Save your chosen Itinerary</span>
+                    <input type="submit" id="save" class="btn btn-success" />
+                </div>
             </div>
             <div id="directions-panel" class="textpadding"></div>
             <ul id="locationlist">
@@ -53,9 +29,10 @@
                     <li class="listItem row">
                         @*<input type="checkbox" class="checkbox" id="_checkbox_btn" value="@Html.DisplayFor(modelItem => item.Latitude),@Html.DisplayFor(modelItem => item.Longitude)" />*@
                         
-                        <img id="thumbimg" class="img-thumbnail col-xs-5 col-sm-5 col-md-5 col-lg-5" src="@Html.DisplayFor(modelItem => item.Url)">
+                        @*<img id="thumbimg" class="img-thumbnail col-xs-5 col-sm-5 col-md-5 col-lg-5" src="@Html.DisplayFor(modelItem => item.Picture)">*@
+                        <img id="locationpic" class="img-thumbnail col-xs-5 col-sm-5 col-md-5 col-lg-5" src="data:image;base64,@System.Convert.ToBase64String(item.Picture)" />
                         <div id="text" class="col-xs-5 col-sm-5 col-md-5 col-lg-5">
-                            @Html.DisplayFor(modelItem => item.Name)<br>
+                            <text class="nameText">@Html.DisplayFor(modelItem => item.Name)</text><br>
                             @Html.DisplayFor(modelItem => item.Latitude)<br>
                             @Html.DisplayFor(modelItem => item.Longitude)<br>
                             @Html.DisplayFor(modelItem => item.Time)<text> Mins</text><br>
@@ -63,20 +40,32 @@
                         <div id="checkbox" class="col-xs-1 col-sm-1 col-md-1 col-lg-1">
                             <input type="checkbox" class="checkbox" id="_checkbox_btn" value="@Html.DisplayFor(modelItem => item.Latitude),@Html.DisplayFor(modelItem => item.Longitude)" />
                         </div>
+                        <div id="desc">
+                            @Html.DisplayFor(modelItem => item.Description)
+                        </div>
                         <br><br />
                     </li>
                 }
             </ul>
         </div>
         <div id="map" class="col-xs-9 col-sm-9 col-md-9 col-lg-9"></div>
+        <div id="infowindow-content">
+            <img src="" width="16" height="16" id="place-icon">
+            <span id="place-name" class="title"></span><br>
+            <span id="place-address"></span>
         </div>
-    <div id="row" class="row">
-        <div id="">
-
+    </div>
+    <span id="seltext">Curiated Package Selections</span>
+    <div id="row2" class="row">
+        <div id="PlannedTrips">
+            @Html.Action("_PlannedTrips")
         </div>
     </div>
 </div>
     <script>
+
+        var GlobalVars = {};
+
         function initMap() {
             var directionsService = new google.maps.DirectionsService;
             var directionsDisplay = new google.maps.DirectionsRenderer;
@@ -87,7 +76,77 @@
             directionsDisplay.setMap(map);
 
             document.getElementById('submit').addEventListener('click', function () {
+                $("#saving").css("visibility","visible");
                 calculateAndDisplayRoute(directionsService, directionsDisplay);
+            });
+
+            document.getElementById('submit').addEventListener('click', function () {
+                //calculateAndDisplayRoute(directionsService, directionsDisplay);
+            });
+
+            google.maps.event.addListener(map, 'click', function (event) {
+                var lat = event.latLng.lat();
+                var long = event.latLng.lng();
+                //alert('Lat: ' + lat + ' and Longitude is: ' + long);
+            });
+
+            var input = document.getElementById('search');
+            var autocomplete = new google.maps.places.Autocomplete(input);
+
+            // Bind the map's bounds (viewport) property to the autocomplete object,
+            // so that the autocomplete requests use the current map bounds for the
+            // bounds option in the request.
+            autocomplete.bindTo('bounds', map);
+
+            var infowindow = new google.maps.InfoWindow();
+            var infowindowContent = document.getElementById('infowindow-content');
+            infowindow.setContent(infowindowContent);
+            var marker = new google.maps.Marker({
+                map: map,
+                anchorPoint: new google.maps.Point(0, -29)
+            });
+
+            autocomplete.addListener('place_changed', function () {
+                infowindow.close();
+                marker.setVisible(false);
+                var place = autocomplete.getPlace();
+                if (!place.geometry) {
+                    // User entered the name of a Place that was not suggested and
+                    // pressed the Enter key, or the Place Details request failed.
+                    window.alert("No details available for input: '" + place.name + "'");
+                    return;
+                }
+
+                var lat = place.geometry.location.lat().toFixed(7);
+                var long = place.geometry.location.lng().toFixed(7);
+
+                //input.value = lat + ',' + long;
+
+                GlobalVars.coords = lat + ',' + long;
+
+                // If the place has a geometry, then present it on a map.
+                if (place.geometry.viewport) {
+                    map.fitBounds(place.geometry.viewport);
+                } else {
+                    map.setCenter(place.geometry.location);
+                    map.setZoom(17);  // Why 17? Because it looks good.
+                }
+                marker.setPosition(place.geometry.location);
+                marker.setVisible(true);
+
+                var address = '';
+                if (place.address_components) {
+                    address = [
+                      (place.address_components[0] && place.address_components[0].short_name || ''),
+                      (place.address_components[1] && place.address_components[1].short_name || ''),
+                      (place.address_components[2] && place.address_components[2].short_name || '')
+                    ].join(' ');
+                }
+
+                infowindowContent.children['place-icon'].src = place.icon;
+                infowindowContent.children['place-name'].textContent = place.name;
+                infowindowContent.children['place-address'].textContent = address;
+                infowindow.open(map, marker);
             });
         }
 
@@ -104,8 +163,8 @@
             }
 
             directionsService.route({
-                origin: document.getElementById('start').value,
-                destination: document.getElementById('end').value,
+                origin: GlobalVars.coords,
+                destination: GlobalVars.coords,
                 waypoints: waypts,
                 optimizeWaypoints: true,
                 travelMode: 'DRIVING'
@@ -131,116 +190,26 @@
             });
         }
 
+
         $(document).ready(function () {
             //$(".container.body-content").css("min-width", "1300px");
+            $(".nameText").click(function () {
+
+                var test = $(this).parent().parent()[0].children[3];
+                $text = $(test).attr('id');
+                //$(test).fadeIn("slow").css("display", "inline-block");
+                if ($(test).css('display') == 'none') {
+                    $(test).fadeIn("slow").css("display", "inline-block");
+                } else {
+                    $(test).fadeOut("slow");
+                }
+            });
+
             $("footer").hide();
         });
     </script>
 
 
-    @*<div id="floating-panel">
-            <b>Start: </b>
-            <select id="start">
-                <option value="penn station, new york, ny">Penn Station</option>
-                <option value="grand central station, new york, ny">Grand Central Station</option>
-                <option value="625 8th Avenue, New York, NY, 10018">Port Authority Bus Terminal</option>
-                <option value="staten island ferry terminal, new york, ny">Staten Island Ferry Terminal</option>
-                <option value="101 E 125th Street, New York, NY">Harlem - 125th St Station</option>
-            </select>
-            <b>End: </b>
-            <select id="end">
-                <option value="260 Broadway New York NY 10007">City Hall</option>
-                <option value="W 49th St & 5th Ave, New York, NY 10020">Rockefeller Center</option>
-                <option value="moma, New York, NY">MOMA</option>
-                <option value="350 5th Ave, New York, NY, 10118">Empire State Building</option>
-                <option value="253 West 125th Street, New York, NY">Apollo Theater</option>
-                <option value="1 Wall St, New York, NY">Wall St</option>
-            </select>
-        </div>
-        <div id="map"></div>
-            &nbsp;
-        <div id="warnings-panel"></div>
-        <script>
-              function initMap() {
-                var markerArray = [];
-
-                // Instantiate a directions service.
-                var directionsService = new google.maps.DirectionsService;
-
-                // Create a map and center it on Manhattan.
-                var map = new google.maps.Map(document.getElementById('map'), {
-                  zoom: 13,
-                  center: {lat: 40.771, lng: -73.974}
-                });
-
-                // Create a renderer for directions and bind it to the map.
-                var directionsDisplay = new google.maps.DirectionsRenderer({map: map});
-
-                // Instantiate an info window to hold step text.
-                var stepDisplay = new google.maps.InfoWindow;
-
-                // Display the route between the initial start and end selections.
-                calculateAndDisplayRoute(
-                    directionsDisplay, directionsService, markerArray, stepDisplay, map);
-                // Listen to change events from the start and end lists.
-                var onChangeHandler = function() {
-                  calculateAndDisplayRoute(
-                      directionsDisplay, directionsService, markerArray, stepDisplay, map);
-                };
-                document.getElementById('start').addEventListener('change', onChangeHandler);
-                document.getElementById('end').addEventListener('change', onChangeHandler);
-              }
-
-              function calculateAndDisplayRoute(directionsDisplay, directionsService,
-                  markerArray, stepDisplay, map) {
-                // First, remove any existing markers from the map.
-                for (var i = 0; i < markerArray.length; i++) {
-                  markerArray[i].setMap(null);
-                }
-
-                // Retrieve the start and end locations and create a DirectionsRequest using
-                // WALKING directions.
-                directionsService.route({
-                  origin: document.getElementById('start').value,
-                  destination: document.getElementById('end').value,
-                  travelMode: 'WALKING'
-                }, function(response, status) {
-                  // Route the directions and pass the response to a function to create
-                  // markers for each step.
-                  if (status === 'OK') {
-                    document.getElementById('warnings-panel').innerHTML =
-                        '<b>' + response.routes[0].warnings + '</b>';
-                    directionsDisplay.setDirections(response);
-                    showSteps(response, markerArray, stepDisplay, map);
-                  } else {
-                    window.alert('Directions request failed due to ' + status);
-                  }
-                });
-              }
-
-              function showSteps(directionResult, markerArray, stepDisplay, map) {
-                // For each step, place a marker, and add the text to the marker's infowindow.
-                // Also attach the marker to an array so we can keep track of it and remove it
-                // when calculating new routes.
-                var myRoute = directionResult.routes[0].legs[0];
-                for (var i = 0; i < myRoute.steps.length; i++) {
-                  var marker = markerArray[i] = markerArray[i] || new google.maps.Marker;
-                  marker.setMap(map);
-                  marker.setPosition(myRoute.steps[i].start_location);
-                  attachInstructionText(
-                      stepDisplay, marker, myRoute.steps[i].instructions, map);
-                }
-              }
-
-              function attachInstructionText(stepDisplay, marker, text, map) {
-                google.maps.event.addListener(marker, 'click', function() {
-                  // Open an info window when the marker is clicked on, containing the text
-                  // of the step.
-                  stepDisplay.setContent(text);
-                  stepDisplay.open(map, marker);
-                });
-              }
-        </script>*@
 
     @*<script>
               function initMap() {
@@ -320,5 +289,5 @@
               }
         </script>*@
     <script async defer
-            src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBw_b25ZsVxp4GvOal3ImsezOFWLU-PMyw&callback=initMap">
+            src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBw_b25ZsVxp4GvOal3ImsezOFWLU-PMyw&libraries=places&callback=initMap">
     </script>

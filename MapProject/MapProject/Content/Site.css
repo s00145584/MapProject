@@ -5,8 +5,8 @@
 
 /* Set padding to keep content from hitting the edges */
 .body-content {
-    padding-left: 15px;
-    padding-right: 15px;
+    padding-left: 1px;
+    padding-right: 1px;
 }
 
 /* Override the default bootstrap behavior where horizontal description lists 
@@ -42,12 +42,13 @@ textarea {
 }
 
 #row{
-    position:absolute;
+    /*position:absolute;*/
     left:0;
     right:0;
     display:inline-block;
     /*float:left;*/
     width:100%;
+    margin-left:-5px
 }
 
 #waypoints{
@@ -67,6 +68,19 @@ textarea {
     background-repeat:   no-repeat;
     background-size:     cover;
     float:left;
+}
+#thumbimgp{
+    /*width:  200px;*/
+    max-width:150px;
+    max-height:100px;
+    width: auto;
+    height: auto;
+    float:left;
+     -webkit-border-radius: 10px;
+    -moz-border-radius: 10px;
+    -khtml-border-radius: 10px;  
+    border-radius: 10px;
+    overflow: hidden;
 }
 
 
@@ -105,7 +119,7 @@ html, body {
 
 #container {
     overflow:auto;
-    padding-bottom:150px;
+    /*padding-bottom:150px;*/
 }
 
 .footer {
@@ -114,4 +128,123 @@ html, body {
   height: 150px;
   clear:both;
   padding-top:20px;
-} 
+}
+
+#row2 {
+    /*position: absolute;*/
+    left: 0;
+    right: 0;
+    display: inline-block;
+    /*float:left;*/
+    width: 100%;
+    padding-top: 5px;
+    white-space:nowrap;
+    /*overflow-x:scroll;*/
+    /*margin-bottom:10px;*/
+    overflow-y:auto;
+    margin-left:-1px
+}
+
+#PTlist {
+  list-style-type: none;
+}
+
+#PTlist li {
+    border-right: 1px solid #ffffff; 
+  /*width:260px;*/ 
+  display: inline; 
+  list-style-type: none;
+}
+
+#infowindow-content .title {
+  font-weight: bold;
+}
+
+#infowindow-content {
+  display: none;
+}
+
+#map #infowindow-content {
+  display: inline;
+}
+
+#search{
+    display:inline;
+    min-width:200px;
+    height:34px;
+}
+
+#SaveText{
+    width:350px;
+}
+
+#PlannedTrips{
+    margin-left:10px;
+
+}
+
+.PlannedTrips{
+    display:inline-flex;
+    width:300px;
+    height:130px;
+    box-shadow:3px 3px 20px lightblue;
+    background-color:#f9fdff;
+    padding-left:5px;
+    padding-top:2px;
+    margin-left:10px;
+    margin-right:10px;
+    margin-bottom:10px;
+    border-radius: 5px;
+    align-items : center;
+    border-style:solid;
+    border-color:lightblue;
+    border-width:1px;
+}
+
+.PlannedTrips:hover{
+    background-color:#f2fbff;
+}
+
+#home{
+    width:60%;
+    margin-left:auto;
+    margin-right:auto;
+}
+
+.container-fluid .jumbotron{
+    border-radius: 6px;
+}
+
+#saving{
+    visibility:hidden;
+    margin-top:5px;
+    margin-left:1px;
+}
+
+/*#locationpic{
+    max-height:20px;
+}*/
+
+#desc{
+    display:none;
+}
+
+.display-none {
+    display: none !important;
+}
+
+.display-inline-block {
+    display: inline-block !important;
+}
+#seltext{
+    display:inline-block;
+    margin-left:15px;
+    margin-top:7px;
+    font-size:30px;
+}
+
+#mainimg{
+    max-height:150px;
+    width:auto;
+}
+
