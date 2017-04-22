@@ -22,6 +22,7 @@ namespace MapProject.DAL
 
         public List<PlannedTripsModel> GetAll()
         {
+            //.Where(d => d.UserId == null)
             return context.Trips.ToList();
         }
     }

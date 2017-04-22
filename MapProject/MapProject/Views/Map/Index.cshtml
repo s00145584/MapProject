@@ -12,7 +12,7 @@
                 </div>
                 <div id="saving" class="row">
                     <span id="SaveText">Save your chosen Itinerary</span>
-                    <input type="submit" id="save" class="btn btn-success" />
+                    <input type="submit" id="Save" class="btn btn-success" />
                 </div>
             </div>
             <div id="directions-panel" class="textpadding"></div>
@@ -36,9 +36,11 @@
                             @Html.DisplayFor(modelItem => item.Latitude)<br>
                             @Html.DisplayFor(modelItem => item.Longitude)<br>
                             @Html.DisplayFor(modelItem => item.Time)<text> Mins</text><br>
+                            
                         </div>
                         <div id="checkbox" class="col-xs-1 col-sm-1 col-md-1 col-lg-1">
                             <input type="checkbox" class="checkbox" id="_checkbox_btn" value="@Html.DisplayFor(modelItem => item.Latitude),@Html.DisplayFor(modelItem => item.Longitude)" />
+                            @Html.HiddenFor(modelItem => item.Id, htmlAttributes: new { id = "LocationID" })
                         </div>
                         <div id="desc">
                             @Html.DisplayFor(modelItem => item.Description)
@@ -177,7 +179,7 @@
                     // For each route, display summary information.
                     for (var i = 0; i < route.legs.length; i++) {
                         var routeSegment = i + 1;
-                        summaryPanel.innerHTML += '<b>Route Segment: ' + routeSegment +
+                        summaryPanel.innerHTML += '<b>Itinerary Stop: ' + routeSegment +
                             '</b><br>';
                         summaryPanel.innerHTML += route.legs[i].start_address + '<br>to<br>';
                         summaryPanel.innerHTML += route.legs[i].end_address + '<br>';
@@ -205,10 +207,60 @@
                 }
             });
 
+            $("#Save").click(function (e) {
+                e.preventDefault();
+                var Locations = [];
+                var checkboxArray = $(".checkbox");
+                for (var i = 0; i < checkboxArray.length; i++) {
+                    if (checkboxArray[i].checked) {
+                        var test2 = checkboxArray[i].value;
+                        Locations.push($("#_checkbox_btn[value='" + checkboxArray[i].value + "']").siblings()[0].value);
+                        //waypts.push($(this).;
+                    }
+                }
+
+                $.post("@Url.Action("SaveItinerary", "Map")", { id: "@ViewBag.UserId", list: Locations }, function (data) {
+                    //, list: Locations 
+                    alert(data);
+
+                    toastr.options = {
+                        "closeButton": false,
+                        "debug": false,
+                        "newestOnTop": false,
+                        "progressBar": false,
+                        "positionClass": "toast-top-right",
+                        "preventDuplicates": false,
+                        "onclick": null,
+                        "showDuration": "300",
+                        "hideDuration": "1000",
+                        "timeOut": "5000",
+                        "extendedTimeOut": "1000",
+                        "showEasing": "swing",
+                        "hideEasing": "linear",
+                        "showMethod": "fadeIn",
+                        "hideMethod": "fadeOut"
+                    }
+                    if (data == 1) {
+                        toastr["success"]("Your Saved Itinerary Has Been Updated")
+                    }
+                    else if (data == 2) {
+                        toastr["success"]("You Have Saved An Itinerary")
+                    }
+                    else{
+                        toastr["error"]("Error has occured!")
+                    }
+
+                    
+
+                    
+
+                });
+
+            });
+
             $("footer").hide();
         });
     </script>
-
 
 
     @*<script>

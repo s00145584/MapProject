@@ -114,6 +114,9 @@ namespace MapProject.Controllers
                     }
                     else
                     {
+                        var ownerCookie = new HttpCookie("OwnerId", OwnerId);
+                        ownerCookie.Expires.AddDays(365);
+                        HttpContext.Response.Cookies.Add(ownerCookie);
                         return RedirectToAction("Index", "Map");
                     }
                     
