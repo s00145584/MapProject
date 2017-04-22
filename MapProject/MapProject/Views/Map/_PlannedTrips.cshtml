@@ -3,20 +3,69 @@
 
     @foreach (var item in Model)
     {
-        if (Model.First() == item)
-        { }
+        if (item.UserId == ViewBag.UserId)
+        {
+            <span class="SavedPlannedTrips">
+
+                <div id="imagecentre" class="col-xs-7 col-sm-7 col-md-7 col-lg-7">
+                    <img id="thumbimgp" src="~/Content/Images/Curiated.png">
+                    @*<img src="~/Content/Images/Curiated.png" />*@
+
+                </div>
+                @Html.DisplayFor(modelItem => item.Name, new { @class = "col-xs-5 col-sm-5 col-md-5 col-lg-5" })
+                @Html.HiddenFor(modelItem => item.Id, htmlAttributes: new { id = "TripID" })
+            </span>
+        }
         else
         {
-            @*<hr>*@
+            <span class="PlannedTrips">
+
+                <div id="imagecentre" class="col-xs-7 col-sm-7 col-md-7 col-lg-7">
+                    <img id="thumbimgp" src="data:image;base64,@System.Convert.ToBase64String(item.Picture)">
+
+                </div>
+                @Html.DisplayFor(modelItem => item.Name, new { @class = "col-xs-5 col-sm-5 col-md-5 col-lg-5" })
+                @Html.HiddenFor(modelItem => item.Id, htmlAttributes: new { id = "TripID" })
+            </span>
         }
 
-        <span class="PlannedTrips">
-            
-            <div id="imagecentre" class="col-xs-7 col-sm-7 col-md-7 col-lg-7">
-                <img id="thumbimgp"  src="data:image;base64,@System.Convert.ToBase64String(item.Picture)">
 
-            </div>
-            @Html.DisplayFor(modelItem => item.Name, new { @class = "col-xs-5 col-sm-5 col-md-5 col-lg-5" })
-        </span>
+
     }
+
+    <script>
+        $(".PlannedTrips").click(function (e) {
+            e.preventDefault();
+            $.post("@Url.Action("GetPlannedTrips", "Map")", { id: $(this).find('#TripID').val() }, function (data) {
+
+                //alert(data);
+                $(".checkbox").each(function () {
+                    this.checked = false;
+                });
+
+                jQuery.each(data, function (i, val) {
+                    $("#LocationID[value='" + val + "']").siblings()[0].checked = true;
+                });
+
+            });
+        });
+
+        $(".SavedPlannedTrips").click(function (e) {
+            e.preventDefault();
+            $.post("@Url.Action("GetSavedPlannedTrips", "Map")", { id: $(this).find('#TripID').val() }, function (data2) {
+
+                var a = data2.split(',');;
+
+                //alert(data);
+                $(".checkbox").each(function(){
+                    this.checked = false;
+                });
+
+                jQuery.each(a, function (i, val2) {
+                    $("#LocationID[value='" + val2 + "']").siblings()[0].checked = true;
+                });
+
+            });
+        });
+    </script>
 

@@ -3,10 +3,24 @@
     ViewBag.Title = "Home Page";
 }
 <div id="home">
-    <div class="jumbotron">
+    <div id="Head" class="row">
         <img id="mainimg" src="~/Content/Images/Visit Tourv2.png" />
-        @*<p class="lead">ASP.NET is a free web framework for building great Web sites and Web applications using HTML, CSS and JavaScript.</p>
-            <p><a href="http://asp.net" class="btn btn-primary btn-lg">Learn more &raquo;</a></p>*@
+    </div>
+
+    <div id="Action" class="row">
+        @*<input id="btnGuest" type="button" value="Try out as Guest!" />*@
+        <div class="col-md-4">
+            @Html.ActionLink("Try out as Guest!", "Index", "Map",null, new { id = "btnGuest" })
+        </div>
+        <div class="col-md-4">
+            @*<input id="btnOwner" type="button" value="Owners Login" />*@
+            @Html.ActionLink("Login", "Index", "Map",null, new { @id = "btnLogin" })
+        </div>
+        <div class="col-md-4">
+            @*<input id="btnOwner" type="button" value="Owners Login" />*@
+            @Html.ActionLink("Register", "Register", "Account", null, new { @id = "btnRegister" })
+            @*@Html.ActionLink("Register", "Register", "Account", routeValues: null, htmlAttributes: new { id = "registerLink" })*@
+        </div>
     </div>
 
     <div class="row">
@@ -20,7 +34,7 @@
 
     <!-- First Featurette -->
     <div class="featurette" id="about">
-        <img class="featurette-image img-circle img-responsive pull-right" src="http://placehold.it/500x500">
+        <img class="featurette-image img-circle img-responsive pull-right" src="~/Content/Images/places.png">
         <h2 class="featurette-heading">
             This First Heading
             <span class="text-muted">Will Catch Your Eye</span>
@@ -30,7 +44,7 @@
 
     <!-- Second Featurette -->
     <div class="featurette" id="services">
-        <img class="featurette-image img-circle img-responsive pull-left" src="http://placehold.it/500x500">
+        <img class="featurette-image img-circle img-responsive pull-left" src="~/Content/Images/Curiated.png">
         <h2 class="featurette-heading">
             The Second Heading
             <span class="text-muted">Is Pretty Cool Too.</span>
@@ -40,7 +54,7 @@
 
     <!-- Third Featurette -->
     <div class="featurette" id="contact">
-        <img class="featurette-image img-circle img-responsive pull-right" src="http://placehold.it/500x500">
+        <img class="featurette-image img-circle img-responsive pull-right" src="~/Content/Images/Map.png">
         <h2 class="featurette-heading">
             The Third Heading
             <span class="text-muted">Will Seal the Deal.</span>
