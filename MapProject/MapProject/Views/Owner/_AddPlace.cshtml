@@ -3,10 +3,162 @@
     ViewBag.Title = "Add new Location";
 }
 
-<h2>@ViewBag.Title.</h2>
+@*<h2>@ViewBag.Title.</h2>*@
 @*<h2>@ViewBag.OwnerId.</h2>*@
+@if (Model.Name == null)
+{
+    using (Html.BeginForm("AddPlace", "Owner", FormMethod.Post, new { @class = "form-horizontal", role = "form", enctype = "multipart/form-data" }))
+    {
+        @Html.AntiForgeryToken()
+        <h4>Add a new location.</h4>
+        <hr />
+        @Html.ValidationSummary("", new { @class = "text-danger" })
+        <div class="form-group">
+            @Html.LabelFor(m => m.Name, new { @class = "col-md-2 control-label" })
+            <div class="col-md-10">
+                @Html.TextBoxFor(m => m.Name, new { @class = "form-control" })
+            </div>
+        </div>
+        <div class="form-group">
+            @Html.LabelFor(m => m.Latitude, new { @class = "col-md-2 control-label" })
+            <div class="col-md-10">
+                @Html.TextBoxFor(m => m.Latitude, new { @class = "form-control" })
+            </div>
+        </div>
+        <div class="form-group">
+            @Html.LabelFor(m => m.Longitude, new { @class = "col-md-2 control-label" })
+            <div class="col-md-10">
+                @Html.TextBoxFor(m => m.Longitude, new { @class = "form-control" })
+            </div>
+        </div>
+        <div class="form-group">
+            @Html.LabelFor(m => m.Description, new { @class = "col-md-2 control-label" })
+            <div class="col-md-10">
+                @Html.TextBoxFor(m => m.Description, new { @class = "form-control" })
+            </div>
+        </div>
+        <div class="form-group">
+            @Html.LabelFor(m => m.Website, new { @class = "col-md-2 control-label" })
+            <div class="col-md-10">
+                @Html.TextBoxFor(m => m.Website, new { @class = "form-control" })
+            </div>
+        </div>
+        <div class="form-group">
+            @Html.LabelFor(m => m.Picture, new { @class = "col-md-2 control-label" })
+            <div class="col-md-10">
+                @*@Html.TextBoxFor(m => m.Picture, new { type = "file", @class = "form-control" })*@
+                <input id="iPicture" name="iPicture" type="file">
+            </div>
+        </div>
+        <div class="form-group">
+            @Html.LabelFor(m => m.CategoryId, new { @class = "col-md-2 control-label" })
+            <div class="col-md-10">
+                @{
+                    List<SelectListItem> listItems = ViewBag.Categories;
+                }
 
-@using (Html.BeginForm("AddPlace", "Owner", FormMethod.Post, new { @class = "form-horizontal", role = "form", enctype = "multipart/form-data" }))
+                @Html.DropDownListFor(m => m.CategoryId, listItems, "-- Select Category --", new { @class = "form-control" })
+            </div>
+        </div>
+
+
+        @Html.HiddenFor(m => m.OwnerId, new { Value = ViewBag.OwnerId })
+
+
+                    <div class="form-group">
+                        <div class="col-md-offset-2 col-md-10">
+                            <input type="submit" class="btn btn-default" value="Add Place" />
+                        </div>
+                    </div>
+                        }
+                    }
+                    else
+                    {
+                        using (Html.BeginForm("AddPlace", "Owner", FormMethod.Post, new { @class = "form-horizontal", role = "form", enctype = "multipart/form-data" }))
+                        {
+                            @Html.AntiForgeryToken()
+                            <div class="form-horizontal">
+                                <h4>Update Location</h4>
+                                <hr />
+                                @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+                                @Html.HiddenFor(model => model.Id)
+
+                                <div class="form-group">
+                                    @Html.LabelFor(model => model.Name, htmlAttributes: new { @class = "control-label col-md-2" })
+                                    <div class="col-md-10">
+                                        @Html.EditorFor(model => model.Name, new { htmlAttributes = new { @class = "form-control" } })
+                                        @Html.ValidationMessageFor(model => model.Name, "", new { @class = "text-danger" })
+                                    </div>
+                                </div>
+
+                                <div class="form-group">
+                                    @Html.LabelFor(model => model.Latitude, htmlAttributes: new { @class = "control-label col-md-2" })
+                                    <div class="col-md-10">
+                                        @Html.EditorFor(model => model.Latitude, new { htmlAttributes = new { @class = "form-control" } })
+                                        @Html.ValidationMessageFor(model => model.Latitude, "", new { @class = "text-danger" })
+                                    </div>
+                                </div>
+
+                                <div class="form-group">
+                                    @Html.LabelFor(model => model.Longitude, htmlAttributes: new { @class = "control-label col-md-2" })
+                                    <div class="col-md-10">
+                                        @Html.EditorFor(model => model.Longitude, new { htmlAttributes = new { @class = "form-control" } })
+                                        @Html.ValidationMessageFor(model => model.Longitude, "", new { @class = "text-danger" })
+                                    </div>
+                                </div>
+
+                                <div class="form-group">
+                                    @Html.LabelFor(model => model.Picture, htmlAttributes: new { @class = "control-label col-md-2" })
+                                    <div class="col-md-10">
+                                        @*@Html.EditorFor(model => model.Picture, new { htmlAttributes = new { @class = "form-control" } })*@
+                                        <input id="iPicture" name="iPicture" type="file">
+                                        @Html.ValidationMessageFor(model => model.Picture, "", new { @class = "text-danger" })
+                                    </div>
+                                </div>
+
+                                <div class="form-group">
+                                    @Html.LabelFor(model => model.Description, htmlAttributes: new { @class = "control-label col-md-2" })
+                                    <div class="col-md-10">
+                                        @Html.EditorFor(model => model.Description, new { htmlAttributes = new { @class = "form-control" } })
+                                        @Html.ValidationMessageFor(model => model.Description, "", new { @class = "text-danger" })
+                                    </div>
+                                </div>
+
+                                <div class="form-group">
+                                    @Html.LabelFor(model => model.Website, htmlAttributes: new { @class = "control-label col-md-2" })
+                                    <div class="col-md-10">
+                                        @Html.EditorFor(model => model.Website, new { htmlAttributes = new { @class = "form-control" } })
+                                        @Html.ValidationMessageFor(model => model.Website, "", new { @class = "text-danger" })
+                                    </div>
+                                </div>
+
+                                <div class="form-group">
+                                    @Html.LabelFor(model => model.CategoryId, htmlAttributes: new { @class = "control-label col-md-2" })
+                                    <div class="col-md-10">
+                                        @*@Html.EditorFor(model => model.CategoryId, new { htmlAttributes = new { @class = "form-control" } })*@
+                                        @{
+                                            List<SelectListItem> listItems = ViewBag.Categories;
+                                        }
+
+                                        @Html.DropDownListFor(m => m.CategoryId, listItems, "-- Select Category --", new { @class = "form-control" })
+                                        @Html.ValidationMessageFor(model => model.CategoryId, "", new { @class = "text-danger" })
+                                    </div>
+                                </div>
+                            </div>
+
+
+                            @Html.HiddenFor(m => m.OwnerId, new { Value = ViewBag.OwnerId })
+
+
+                                        <div class="form-group">
+                                            <div class="col-md-offset-2 col-md-10">
+                                                <input type="submit" class="btn btn-default" value="Update Place" />
+                                            </div>
+                                        </div>
+                                            }
+                                        } 
+
+@*@using (Html.BeginForm("AddPlace", "Owner", FormMethod.Post, new { @class = "form-horizontal", role = "form", enctype = "multipart/form-data" }))
 {
     @Html.AntiForgeryToken()
     <h4>Add a new location.</h4>
@@ -37,18 +189,28 @@
         </div>
     </div>
     <div class="form-group">
-        @Html.LabelFor(m => m.Time, new { @class = "col-md-2 control-label" })
+        @Html.LabelFor(m => m.Website, new { @class = "col-md-2 control-label" })
         <div class="col-md-10">
-            @Html.TextBoxFor(m => m.Time, new { @class = "form-control" })
+            @Html.TextBoxFor(m => m.Website, new { @class = "form-control" })
         </div>
     </div>
     <div class="form-group">
         @Html.LabelFor(m => m.Picture, new { @class = "col-md-2 control-label" })
         <div class="col-md-10">
-            @*@Html.TextBoxFor(m => m.Picture, new { type = "file", @class = "form-control" })*@
             <input  id="iPicture" name="iPicture" type="file">
         </div>
     </div>
+    <div class="form-group">
+        @Html.LabelFor(m => m.CategoryId, new { @class = "col-md-2 control-label" })
+        <div class="col-md-10">
+            @{
+                List<SelectListItem> listItems = ViewBag.Categories;
+            }
+
+            @Html.DropDownListFor(m => m.CategoryId, listItems, "-- Select Category --", new { @class = "form-control" })
+        </div>
+    </div>
+
 
     @Html.HiddenFor(m => m.OwnerId, new { Value = ViewBag.OwnerId })
 
@@ -58,7 +220,7 @@
             <input type="submit" class="btn btn-default" value="AddPlace" />
         </div>
     </div>
-}
+}*@
 
 @*@section Scripts {
     @Scripts.Render("~/bundles/jqueryval")

@@ -8,27 +8,23 @@
     </div>
 
     <div id="Action" class="row">
-        @*<input id="btnGuest" type="button" value="Try out as Guest!" />*@
         <div class="col-md-4">
             @Html.ActionLink("Try out as Guest!", "Index", "Map",null, new { id = "btnGuest" })
         </div>
         <div class="col-md-4">
-            @*<input id="btnOwner" type="button" value="Owners Login" />*@
             @Html.ActionLink("Login", "Index", "Map",null, new { @id = "btnLogin" })
         </div>
         <div class="col-md-4">
-            @*<input id="btnOwner" type="button" value="Owners Login" />*@
             @Html.ActionLink("Register", "Register", "Account", null, new { @id = "btnRegister" })
-            @*@Html.ActionLink("Register", "Register", "Account", routeValues: null, htmlAttributes: new { id = "registerLink" })*@
         </div>
     </div>
 
-    <div class="row">
+    @*<div class="row">
         <div class="col-md-3">
             @Html.ActionLink("MapView", "Index", "Map")<br />
             @Html.ActionLink("OwnerView", "Index", "Owner")
         </div>
-    </div>
+    </div>*@
 
     @*<hr class="featurette-divider">*@
 
@@ -36,29 +32,30 @@
     <div class="featurette" id="about">
         <img class="featurette-image img-circle img-responsive pull-right" src="~/Content/Images/places.png">
         <h2 class="featurette-heading">
-            This First Heading
-            <span class="text-muted">Will Catch Your Eye</span>
+            What is VISiTOUR
+            @*<span class="text-muted">Will Catch Your Eye</span>*@
         </h2>
-        <p class="lead">Donec ullamcorper nulla non metus auctor fringilla. Vestibulum id ligula porta felis euismod semper. Praesent commodo cursus magna, vel scelerisque nisl consectetur. Fusce dapibus, tellus ac cursus commodo.</p>
+        <p class="lead">VISiTOUR is a web application that provides for all types of travellers in planning out their ideal day’s itinerary that’s suited to their own needs, preferences and circumstances.</p>
     </div>
 
     <!-- Second Featurette -->
     <div class="featurette" id="services">
         <img class="featurette-image img-circle img-responsive pull-left" src="~/Content/Images/Curiated.png">
         <h2 class="featurette-heading">
-            The Second Heading
-            <span class="text-muted">Is Pretty Cool Too.</span>
+            Curated Packages
+            @*<span class="text-muted">Is Pretty Cool Too.</span>*@
         </h2>
-        <p class="lead">Donec ullamcorper nulla non metus auctor fringilla. Vestibulum id ligula porta felis euismod semper. Praesent commodo cursus magna, vel scelerisque nisl consectetur. Fusce dapibus, tellus ac cursus commodo.</p>
+        <p class="lead">Pre-defined location collections themed on certain interests or ideal itinerary trip categories like scenic, educational, A Day in the Town or Editor’s Choice. All collected by VISiTOUR staff and renowned tourism experts.</p>
     </div>
 
     <!-- Third Featurette -->
     <div class="featurette" id="contact">
         <img class="featurette-image img-circle img-responsive pull-right" src="~/Content/Images/Map.png">
         <h2 class="featurette-heading">
-            The Third Heading
-            <span class="text-muted">Will Seal the Deal.</span>
+            Visual Itinerary Display
+            @*<span class="text-muted">Will Seal the Deal.</span>*@
         </h2>
-        <p class="lead">Donec ullamcorper nulla non metus auctor fringilla. Vestibulum id ligula porta felis euismod semper. Praesent commodo cursus magna, vel scelerisque nisl consectetur. Fusce dapibus, tellus ac cursus commodo.</p>
+        <p class="lead">VISiTOUR gives you a clear and easy to read breakdown of your journey with a detail break down of each stop of your journey. </p>
     </div>
 </div>
+<script>$("footer").hide();</script>

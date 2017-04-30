@@ -38,10 +38,58 @@ namespace MapProject.Controllers
             //    Image1.ImageUrl = "data:image/png;base64," + base64String;
             //}
 
-            ViewBag.UserId = Request.Cookies["OwnerId"].Value;
+            if (Request.Cookies["OwnerId"] != null)
+            {
+                ViewBag.UserId = Request.Cookies["OwnerId"].Value;
+            }
+
+            
 
             return View(repo.GetAll());
         }
+
+        [AllowAnonymous]
+        public ActionResult _Locations()
+        {
+            if (Request.Cookies["OwnerId"] != null)
+            {
+                ViewBag.UserId = Request.Cookies["OwnerId"].Value;
+            }
+
+            return PartialView(repo.GetAll());
+        }
+
+        //[HttpPost]
+        //public ActionResult _Locations(List<int> id)
+        //{
+        //    if (id==null)
+        //    {
+        //        return PartialView();
+        //    }
+        //    //List<int> Locations = new List<int>();
+
+        //    //SqlCommand cmd = new SqlCommand("dbo.GetLocation", connection);
+        //    //cmd.CommandType = System.Data.CommandType.StoredProcedure;
+        //    //cmd.Parameters.Add("@catID", SqlDbType.VarChar).Value = id;
+
+        //    //connection.Open();
+        //    //rdr = cmd.ExecuteReader();
+
+        //    //while (rdr.Read())
+        //    //{
+        //    //    Locations.Add((int)rdr["LocationId"]);
+        //    //}
+        //    //var test = Json(Locations);
+        //    List<LocationViewModel> locations = new List<LocationViewModel>();
+        //    foreach (var item in id)
+        //    {
+        //        foreach (var i in repo.GetAll().Where(l => l.CategoryId == item))
+        //        {
+        //            locations.Add(i);
+        //        }
+        //    }
+        //    return PartialView(locations.OrderBy(l=>l.Id));
+        //}
 
         [AllowAnonymous]
         public ActionResult _PlannedTrips()
@@ -98,7 +146,7 @@ namespace MapProject.Controllers
             {
                 LocationString = (string)rdr["LocationsIDs"];
             }
-
+            connection.Close();
             return Content(LocationString);
         }
 

@@ -25,6 +25,9 @@ namespace MapProject.Models
         public string OwnerId { get; set; }
         [Display(Name = "Location Time")]
         public float Time { get; set; }
+        public string Website { get; set; }
+        [Display(Name = "Category")]
+        public int CategoryId { get; set; }
 
     }
 

@@ -219,6 +219,14 @@
     <Compile Include="Migrations\201704212237432_ChangePlannedTripsModel-RemoveRequiredPicture.Designer.cs">
       <DependentUpon>201704212237432_ChangePlannedTripsModel-RemoveRequiredPicture.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\201704292034484_add-website.cs" />
+    <Compile Include="Migrations\201704292034484_add-website.Designer.cs">
+      <DependentUpon>201704292034484_add-website.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201704292355240_add-CategoryId.cs" />
+    <Compile Include="Migrations\201704292355240_add-CategoryId.Designer.cs">
+      <DependentUpon>201704292355240_add-CategoryId.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\AccountViewModels.cs" />
     <Compile Include="Models\IdentityModels.cs" />
@@ -287,7 +295,9 @@
     <Content Include="Scripts\bootstrap.min.js" />
     <Content Include="Content\toastr.scss" />
     <Content Include="Content\toastr.less" />
+    <Content Include="ClassDiagram1.cd" />
     <None Include="Properties\PublishProfiles\sligomap - Web Deploy.pubxml" />
+    <None Include="Properties\PublishProfiles\visitour - Web Deploy.pubxml" />
     <None Include="Scripts\jquery-3.1.1.intellisense.js" />
     <Content Include="Scripts\jquery-3.1.1.js" />
     <Content Include="Scripts\jquery-3.1.1.min.js" />
@@ -348,6 +358,8 @@
     <Content Include="Views\Owner\Index.cshtml" />
     <Content Include="Views\Owner\_AddPlace.cshtml" />
     <Content Include="Views\Map\_PlannedTrips.cshtml" />
+    <Content Include="Views\Map\_Locations.cshtml" />
+    <Content Include="Views\Owner\_EditPlace.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
@@ -389,6 +401,12 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\201704212237432_ChangePlannedTripsModel-RemoveRequiredPicture.resx">
       <DependentUpon>201704212237432_ChangePlannedTripsModel-RemoveRequiredPicture.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201704292034484_add-website.resx">
+      <DependentUpon>201704292034484_add-website.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201704292355240_add-CategoryId.resx">
+      <DependentUpon>201704292355240_add-CategoryId.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <PropertyGroup>

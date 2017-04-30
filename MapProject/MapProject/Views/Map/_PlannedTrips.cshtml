@@ -3,12 +3,12 @@
 
     @foreach (var item in Model)
     {
-        if (item.UserId == ViewBag.UserId)
+        if (item.UserId == ViewBag.UserId && ViewBag.UserId != null)
         {
             <span class="SavedPlannedTrips">
 
                 <div id="imagecentre" class="col-xs-7 col-sm-7 col-md-7 col-lg-7">
-                    <img id="thumbimgp" src="~/Content/Images/Curiated.png">
+                    <img id="thumbimgp" src="~/Content/Images/places.png">
                     @*<img src="~/Content/Images/Curiated.png" />*@
 
                 </div>
@@ -66,6 +66,17 @@
                 });
 
             });
+        });
+
+        $(".PlannedTrips").mousedown(function () {
+            $(this).css("background-color", "#b3e8ff");
+        }).mouseup(function () {
+            $(this).css("background-color", "");
+        });
+        $(".SavedPlannedTrips").mousedown(function () {
+            $(this).css("background-color", "#b3ffb3");
+        }).mouseup(function () {
+            $(this).css("background-color", "");
         });
     </script>
 
