@@ -202,8 +202,12 @@ html, body {
 }
 
 .PlannedTrips:hover{
-    background-color:#f2fbff;
+    background-color:#e6f7ff;
 }
+
+/*.PlannedTrips:focus{
+    background-color:#99e0ff;
+}*/
 
 .SavedPlannedTrips{
     display:inline-flex;
@@ -224,8 +228,12 @@ html, body {
 }
 
 .SavedPlannedTrips:hover{
-    background-color:#ccffcc;
+    background-color:#ccffcc
 }
+
+/*.SavedPlannedTrips:active{
+    background-color:#ccffcc;
+}*/
 
 #home{
     width:60%;
@@ -249,6 +257,7 @@ html, body {
 
 #desc{
     display:none;
+    padding:10px;
 }
 
 .display-none {
@@ -299,7 +308,7 @@ html, body {
     font-weight: 200;
     line-height: 2.1428571435;
     color: inherit;
-    background-color: #02bcc8;
+    background-color: #b3b3ff;
     border-radius: 6px;
     display: block;
     text-align: center;
@@ -314,7 +323,7 @@ html, body {
     font-weight: 100;
     line-height: 2.1428571435;
     color: inherit;
-    background-color: #09f223;
+    background-color: #ffb3b3;
     border-radius: 6px;
     display: block;
     text-align: center;
@@ -329,7 +338,7 @@ html, body {
     font-weight: 100;
     line-height: 2.1428571435;
     color: inherit;
-    background-color: #ae3ee9;
+    background-color: #b3ffb3;
     border-radius: 6px;
     display: block;
     text-align: center;
@@ -353,5 +362,10 @@ html, body {
 
 #toast-container > div {
     opacity:1;
+}
+
+.checkboxfilter{
+    margin-left:15px;
+    margin-bottom:20px;
 }
 

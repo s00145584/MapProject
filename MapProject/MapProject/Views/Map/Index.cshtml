@@ -16,38 +16,24 @@
                 </div>
             </div>
             <div id="directions-panel" class="textpadding"></div>
+            <div>
+                <fieldset class="checkboxfilter">
+                    <p>Filter by Type</p>
+                    <div>
+                        <label class="checkbox-inline"><input type="checkbox" value="1">Educational</label>
+                        <label class="checkbox-inline"><input type="checkbox" value="2">Health</label>
+                        <label class="checkbox-inline"><input type="checkbox" value="3">Scenic</label>
+                    </div>
+                    <div>
+                        @*<label class="checkbox-inline"><input type="checkbox" value="">Educational</label>*@
+                        <label class="checkbox-inline"><input type="checkbox" value="4">Spiritual</label>
+                        <label class="checkbox-inline"><input type="checkbox" value="5">Leisure</label>
+                    </div>
+                    <input value="Filter" class="btn" type="button" id="submitFilter"/>
+                </fieldset>
+            </div>
             <ul id="locationlist">
-                @foreach (var item in Model)
-                {
-                    if (Model.First() == item)
-                    { }
-                    else
-                    {
-                        <hr>
-                    }
-
-                    <li class="listItem row">
-                        @*<input type="checkbox" class="checkbox" id="_checkbox_btn" value="@Html.DisplayFor(modelItem => item.Latitude),@Html.DisplayFor(modelItem => item.Longitude)" />*@
-                        
-                        @*<img id="thumbimg" class="img-thumbnail col-xs-5 col-sm-5 col-md-5 col-lg-5" src="@Html.DisplayFor(modelItem => item.Picture)">*@
-                        <img id="locationpic" class="img-thumbnail col-xs-5 col-sm-5 col-md-5 col-lg-5" src="data:image;base64,@System.Convert.ToBase64String(item.Picture)" />
-                        <div id="text" class="col-xs-5 col-sm-5 col-md-5 col-lg-5">
-                            <text class="nameText">@Html.DisplayFor(modelItem => item.Name)</text><br>
-                            @Html.DisplayFor(modelItem => item.Latitude)<br>
-                            @Html.DisplayFor(modelItem => item.Longitude)<br>
-                            @Html.DisplayFor(modelItem => item.Time)<text> Mins</text><br>
-                            
-                        </div>
-                        <div id="checkbox" class="col-xs-1 col-sm-1 col-md-1 col-lg-1">
-                            <input type="checkbox" class="checkbox" id="_checkbox_btn" value="@Html.DisplayFor(modelItem => item.Latitude),@Html.DisplayFor(modelItem => item.Longitude)" />
-                            @Html.HiddenFor(modelItem => item.Id, htmlAttributes: new { id = "LocationID" })
-                        </div>
-                        <div id="desc">
-                            @Html.DisplayFor(modelItem => item.Description)
-                        </div>
-                        <br><br />
-                    </li>
-                }
+                @Html.Action("_Locations")
             </ul>
         </div>
         <div id="map" class="col-xs-9 col-sm-9 col-md-9 col-lg-9"></div>
@@ -195,16 +181,34 @@
 
         $(document).ready(function () {
             //$(".container.body-content").css("min-width", "1300px");
-            $(".nameText").click(function () {
+            //$(".readmore").click(function () {
 
-                var test = $(this).parent().parent()[0].children[3];
-                $text = $(test).attr('id');
-                //$(test).fadeIn("slow").css("display", "inline-block");
-                if ($(test).css('display') == 'none') {
-                    $(test).fadeIn("slow").css("display", "inline-block");
-                } else {
-                    $(test).fadeOut("slow");
+            //    var test = $(this).parent().parent()[0].children[3];
+            //    $text = $(test).attr('id');
+            //    //$(test).fadeIn("slow").css("display", "inline-block");
+            //    if ($(test).css('display') == 'none') {
+            //        $(test).fadeIn("slow").css("display", "inline-block");
+            //    } else {
+            //        $(test).fadeOut("slow");
+            //    }
+            //});
+
+            $("#submitFilter").click(function () {
+                var array = [];
+                var checkboxArray2 = $(".checkbox-inline");
+                for (var i = 0; i < checkboxArray2.length; i++) {
+                    if (checkboxArray2[i].checked) {
+                        var test2 = checkboxArray2[i].value;
+                        array.push(checkboxArray2[i].value);
+                        //waypts.push($(this).;
+                    }
                 }
+                $.post("@Url.Action("_Locations", "Map")", { id: array}, function (data) {
+                    //, list: Locations
+                    alert(data);
+                    
+
+                });
             });
 
             $("#Save").click(function (e) {
@@ -220,8 +224,8 @@
                 }
 
                 $.post("@Url.Action("SaveItinerary", "Map")", { id: "@ViewBag.UserId", list: Locations }, function (data) {
-                    //, list: Locations 
-                    alert(data);
+                    //, list: Locations
+                    //alert(data);
 
                     toastr.options = {
                         "closeButton": false,
@@ -250,10 +254,6 @@
                         toastr["error"]("Error has occured!")
                     }
 
-                    
-
-                    
-
                 });
 
             });
@@ -261,85 +261,6 @@
             $("footer").hide();
         });
     </script>
-
-
-    @*<script>
-              function initMap() {
-                var bounds = new google.maps.LatLngBounds;
-                var markersArray = [];
-
-                var origin1 = {lat: 55.93, lng: -3.118};
-                var destinationA = 'Stockholm, Sweden';
-                var destinationB = 'Sligo, Ireland';
-                var destinationC = 'Dublin, Ireland';
-                var destinationD = 'London, UK';
-                var destinationE = 'Cork, Ireland';
-
-                var destinationIcon = 'https://chart.googleapis.com/chart?' +
-                    'chst=d_map_pin_letter&chld=D|FF0000|000000';
-                var originIcon = 'https://chart.googleapis.com/chart?' +
-                    'chst=d_map_pin_letter&chld=O|FFFF00|000000';
-                var map = new google.maps.Map(document.getElementById('map'), {
-                  center: {lat: 55.53, lng: 9.4},
-                  zoom: 10
-                });
-                var geocoder = new google.maps.Geocoder;
-
-                var service = new google.maps.DistanceMatrixService;
-                service.getDistanceMatrix({
-                  origins: [origin1],
-                  destinations: [destinationA, destinationB, destinationC, destinationD, destinationE],
-                  travelMode: 'DRIVING',
-                  unitSystem: google.maps.UnitSystem.METRIC,
-                  avoidHighways: false,
-                  avoidTolls: false
-                }, function(response, status) {
-                  if (status !== 'OK') {
-                    alert('Error was: ' + status);
-                  } else {
-                    var originList = response.originAddresses;
-                    var destinationList = response.destinationAddresses;
-                    var outputDiv = document.getElementById('output');
-                    outputDiv.innerHTML = '';
-                    deleteMarkers(markersArray);
-
-                    var showGeocodedAddressOnMap = function(asDestination) {
-                      var icon = asDestination ? destinationIcon : originIcon;
-                      return function(results, status) {
-                        if (status === 'OK') {
-                          map.fitBounds(bounds.extend(results[0].geometry.location));
-                          markersArray.push(new google.maps.Marker({
-                            map: map,
-                            position: results[0].geometry.location,
-                            icon: icon
-                          }));
-                        } else {
-                          alert('Geocode was not successful due to: ' + status);
-                        }
-                      };
-                    };
-
-                    for (var i = 0; i < originList.length; i++) {
-                      var results = response.rows[i].elements;
-                      geocoder.geocode({'address': originList[i]},
-                          showGeocodedAddressOnMap(false));
-                      for (var j = 0; j < results.length; j++) {
-                        geocoder.geocode({'address': destinationList[j]},
-                            showGeocodedAddressOnMap(true));
-                        outputDiv.innerHTML += originList[i] + ' to ' + destinationList[j] + ': ' + results[j].distance.text + ' in ' + results[j].duration.text + '<br>';
-                      }
-                    }
-                  }
-                });
-              }
-
-              function deleteMarkers(markersArray) {
-                for (var i = 0; i < markersArray.length; i++) {
-                  markersArray[i].setMap(null);
-                }
-                markersArray = [];
-              }
-        </script>*@
     <script async defer
             src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBw_b25ZsVxp4GvOal3ImsezOFWLU-PMyw&libraries=places&callback=initMap">
     </script>
